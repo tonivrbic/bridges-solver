@@ -1,5 +1,5 @@
 let puzzles = require("./puzzles");
-let puzzle = puzzles[8];
+let puzzle = puzzles[6];
 
 let islands = 0;
 let solvedIslands = 0;
@@ -125,6 +125,38 @@ while (t--) {
               bridges
             );
           });
+        }
+        // } else if (count === 2 && gridItem.value === 2 && gridItem.sum === 1) {
+        //   // do not make a connection that will seperate islands
+        //   if (neighbors.filter(n => n !== 0).some(n => n.value === 1)) {
+        //     neighbors
+        //       .filter(n => n !== 0)
+        //       .filter(n => n.value !== 1)
+        //       .forEach(neighbor => {
+        //         fillPuzzleWithBridge(
+        //           i,
+        //           j,
+        //           neighbor.position[0],
+        //           neighbor.position[1],
+        //           1
+        //         );
+        //       });
+        //   }
+      } else if (count === 2 && gridItem.value === 3 && gridItem.sum === 1) {
+        // do not make a connection that will seperate islands
+        if (neighbors.filter(n => n !== 0).some(n => n.value === 2)) {
+          neighbors
+            .filter(n => n !== 0)
+            .filter(n => n.value !== 2)
+            .forEach(neighbor => {
+              // fillPuzzleWithBridge(
+              //   i,
+              //   j,
+              //   neighbor.position[0],
+              //   neighbor.position[1],
+              //   1
+              // );
+            });
         }
       } else if (count === 2 && gridItem.value === 2) {
         let neighboringValues = neighbors
