@@ -1,5 +1,5 @@
 let puzzles = require("./puzzles");
-let puzzle = puzzles[6];
+let puzzle = puzzles[8];
 
 let islands = 0;
 let solvedIslands = 0;
