@@ -2,18 +2,18 @@
 let solver = require("./solver");
 let puzzles = require("./puzzles");
 // let puzzle = puzzles[puzzles.length-1];
-// let puzzle = puzzles[32];
+// let puzzle = puzzles[33];
 // solver(puzzle);
 
 let results = [];
 for (let i = 0; i < puzzles.length; i++) {
-  let result = solver(puzzles[i]);
-  results.push(result[0]);
+    let result = solver(puzzles[i]);
+    results.push(result[0]);
 }
 results.forEach((element, i) => {
-  if (element === false) {
-    console.error(`${i}. not solved`);
-  } else {
-    console.log(`${i}. solved`);
-  }
+    if (element === false) {
+        console.error(`${i}. not solved`);
+    } else {
+        console.log(`${i}. solved`);
+    }
 });

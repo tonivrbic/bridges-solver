@@ -1,6 +1,6 @@
 let cloneDeep = require("lodash/cloneDeep");
 
-module.exports = function(puzzle) {
+module.exports = function (puzzle) {
   let islands = 0;
   let oldBridges = 0;
   let newBridges = 0;
@@ -240,10 +240,10 @@ module.exports = function(puzzle) {
             if (neighbor !== null && !neighbor.done) {
               left.push(
                 neighbor.node.value -
-                  neighbor.node.neighbors
-                    .filter(n => n !== null)
-                    .map(n => n.bridges)
-                    .reduce((a, b) => a + b, 0)
+                neighbor.node.neighbors
+                  .filter(n => n !== null)
+                  .map(n => n.bridges)
+                  .reduce((a, b) => a + b, 0)
               );
               // setBridges(gn, neighbor, bridges, index);
             }
@@ -417,7 +417,7 @@ module.exports = function(puzzle) {
             });
           }
         });
-        if (sum===0 &&
+        if (sum === 0 &&
           gn.neighbors
             .filter(n => n !== null && !n.done)
             .some(n => n.node.value === 1)
@@ -432,7 +432,7 @@ module.exports = function(puzzle) {
               setBridges(gn, neighbor, 1, index);
             }
           });
-        } 
+        }
         else if (
           sum === 0 &&
           left.some(v => v.value === 1) &&
@@ -450,7 +450,7 @@ module.exports = function(puzzle) {
               setBridges(gn, neighbor, 1, index);
             }
           });
-        }else if(left.every(v=>v.value===1)){
+        } else if (left.every(v => v.value === 1)) {
           gn.neighbors.forEach((neighbor, index) => {
             if (
               neighbor !== null &&
@@ -461,8 +461,8 @@ module.exports = function(puzzle) {
             }
           });
         }
-      } 
-      else if((gn.value === 5 && count === 3 && gn.value - sum > 2)){
+      }
+      else if ((gn.value === 5 && count === 3 && gn.value - sum > 2)) {
         var left = [];
         gn.neighbors.forEach((neighbor, index) => {
           if (neighbor !== null && !neighbor.done) {
@@ -523,6 +523,13 @@ module.exports = function(puzzle) {
             setBridges(gn, gn.neighbors[v.index], 1, v.index);
           });
         }
+      }
+      else if (gn.value === 6 && completed === 1 && count === 3) {
+        gn.neighbors.forEach((neighbor, index) => {
+          if (neighbor !== null && !neighbor.done) {
+            setBridges(gn, neighbor, 1, index);
+          }
+        })
       }
     });
     // fill grid with lines
@@ -728,9 +735,26 @@ module.exports = function(puzzle) {
       head.completed = true;
       console.log(`completed ${head.position}`);
     }
+
+    let neighborSum = neighbor.node.neighbors
+      .filter(n => n !== null)
+      .map(n => n.bridges)
+      .reduce((a, b) => a + b, 0);
+    if (neighbor.node.value === neighborSum) {
+      neighbor.node.neighbors.forEach((n, i) => {
+        if (n !== null) {
+          n.done = true;
+          let ni = calculateIndex(i);
+          n.node.neighbors[ni].done = true;
+        }
+      });
+      neighbor.node.completed = true;
+      console.log(`completed ${neighbor.node.position}`);
+    }
+
     console.log(
       `${bridges} from ${
-        neighbor.node.neighbors[neighborIndex].position
+      neighbor.node.neighbors[neighborIndex].position
       } to ${index}`
     );
   }
