@@ -2,7 +2,7 @@
 let solver = require("./solver");
 let puzzles = require("./puzzles");
 // let puzzle = puzzles[puzzles.length-1];
-// let puzzle = puzzles[31];
+// let puzzle = puzzles[32];
 // solver(puzzle);
 
 let results = [];

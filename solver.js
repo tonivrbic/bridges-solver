@@ -272,7 +272,7 @@ module.exports = function(puzzle) {
             });
           } else if (
             left.some(v => v === 1) &&
-            left.some(v => v === 2) &&
+            left.some(v => v >= 2) &&
             bridgesToNeighbors === 0
             // && gn.value > 2
           ) {
@@ -284,7 +284,7 @@ module.exports = function(puzzle) {
                     .filter(n => n !== null)
                     .map(n => n.bridges)
                     .reduce((a, b) => a + b, 0);
-                if (bridgesLeft === 2) {
+                if (bridgesLeft >= 2) {
                   setBridges(gn, neighbor, 1, index);
                 }
               }
