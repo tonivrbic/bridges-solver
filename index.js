@@ -1,7 +1,8 @@
 // @ts-check
 let solver = require("./solver");
 let puzzles = require("./puzzles");
-// let puzzle = puzzles[29];
+// let puzzle = puzzles[puzzles.length-1];
+// let puzzle = puzzles[31];
 // solver(puzzle);
 
 let results = [];

@@ -1,4 +1,4 @@
-let _ = require("lodash");
+let cloneDeep = require("lodash/cloneDeep");
 
 module.exports = function(puzzle) {
   let islands = 0;
@@ -193,7 +193,7 @@ module.exports = function(puzzle) {
           );
           setBridges(gn, filteredNeighbors[0], 1, index);
         } else {
-          let newGraph = _.cloneDeep(graphNodes);
+          let newGraph = cloneDeep(graphNodes);
           let node = newGraph.find(v => v.id === gn.id);
           for (let i = 0; i < node.neighbors.length; i++) {
             const element = node.neighbors[i];
@@ -226,7 +226,7 @@ module.exports = function(puzzle) {
                   setBridges(gn, gn.neighbors[index], 1, index);
                   break;
                 }
-                newGraph = _.cloneDeep(graphNodes);
+                newGraph = cloneDeep(graphNodes);
                 node = newGraph.find(v => v.id === gn.id);
               }
             }
@@ -290,7 +290,7 @@ module.exports = function(puzzle) {
               }
             });
           } else {
-            let newGraph = _.cloneDeep(graphNodes);
+            let newGraph = cloneDeep(graphNodes);
             let node = newGraph.find(v => v.id === gn.id);
             // if (node.value === 2 && count === 2) {
             if (count === 2) {
@@ -329,7 +329,7 @@ module.exports = function(puzzle) {
                       setBridges(gn, gn.neighbors[index], bridges, index);
                       break;
                     }
-                    newGraph = _.cloneDeep(graphNodes);
+                    newGraph = cloneDeep(graphNodes);
                     node = newGraph.find(v => v.id === gn.id);
                   }
                 }
@@ -399,8 +399,7 @@ module.exports = function(puzzle) {
           });
         }
       } else if (
-        (gn.value === 4 && count === 3 && gn.value - sum > 2) ||
-        (gn.value === 5 && count === 3 && gn.value - sum > 2)
+        (gn.value === 4 && count === 3 && gn.value - sum > 2)
       ) {
         var left = [];
         gn.neighbors.forEach((neighbor, index) => {
@@ -408,7 +407,7 @@ module.exports = function(puzzle) {
             let neighborBridges = neighbor.bridges;
             left.push({
               value:
-                neighborBridges +
+                // neighborBridges +
                 neighbor.node.value -
                 neighbor.node.neighbors
                   .filter(n => n !== null)
@@ -418,7 +417,7 @@ module.exports = function(puzzle) {
             });
           }
         });
-        if (
+        if (sum===0 &&
           gn.neighbors
             .filter(n => n !== null && !n.done)
             .some(n => n.node.value === 1)
@@ -433,7 +432,9 @@ module.exports = function(puzzle) {
               setBridges(gn, neighbor, 1, index);
             }
           });
-        } else if (
+        } 
+        else if (
+          sum === 0 &&
           left.some(v => v.value === 1) &&
           left.filter(v => v.value === 1).length === 1
           // && _.uniq(left.map(v => v.value)).length === count
@@ -445,12 +446,58 @@ module.exports = function(puzzle) {
               !neighbor.done &&
               index !== neighborWithOne.index
             ) {
-              console.log("setting from 4 with 3 neighbors where one is 1");
+              console.log("setting from 4 with 3 neighbors where one is 1 left");
+              setBridges(gn, neighbor, 1, index);
+            }
+          });
+        }else if(left.every(v=>v.value===1)){
+          gn.neighbors.forEach((neighbor, index) => {
+            if (
+              neighbor !== null &&
+              !neighbor.done
+            ) {
+              console.log("setting from 4 with 3 neighbors where every needs 1");
               setBridges(gn, neighbor, 1, index);
             }
           });
         }
-      } else if (gn.value === 6 && count === 3 && sum === 2) {
+      } 
+      else if((gn.value === 5 && count === 3 && gn.value - sum > 2)){
+        var left = [];
+        gn.neighbors.forEach((neighbor, index) => {
+          if (neighbor !== null && !neighbor.done) {
+            let neighborBridges = neighbor.bridges;
+            left.push({
+              value:
+                // neighborBridges +
+                neighbor.node.value -
+                neighbor.node.neighbors
+                  .filter(n => n !== null)
+                  .map(n => n.bridges)
+                  .reduce((a, b) => a + b, 0),
+              index: index
+            });
+          }
+        });
+        if (
+          left.some(v => v.value === 1) &&
+          left.filter(v => v.value === 1).length === 2
+          // && _.uniq(left.map(v => v.value)).length === count
+        ) {
+          let neighborWithoutOne = left.find(v => v.value !== 1);
+          gn.neighbors.forEach((neighbor, index) => {
+            if (
+              neighbor !== null &&
+              !neighbor.done &&
+              index === neighborWithoutOne.index
+            ) {
+              console.log("setting from 5 with 3 neighbors where two are left with 1");
+              setBridges(gn, neighbor, 1, index);
+            }
+          });
+        }
+      }
+      else if (gn.value === 6 && count === 3 && sum === 2) {
         let bridgesLeft =
           gn.value -
           gn.neighbors
@@ -581,6 +628,7 @@ module.exports = function(puzzle) {
       islands === completedIslands &&
       numberOfGraphNodes(graphNodes[0]).length === islands
     ) {
+      console.log(JSON.stringify(puzzle));
       console.log("--------SOLVED---------");
       return [true, showGrid()];
     }
