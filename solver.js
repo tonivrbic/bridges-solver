@@ -61,8 +61,12 @@ module.exports = function (puzzle) {
       }
     });
   });
-  let t = 8;
-  while (t--) {
+
+  let oldPuzzle = '';
+  let currentPuzzle = puzzleToString();
+  while (oldPuzzle !== currentPuzzle) {
+    oldPuzzle = puzzleToString();
+
     graphNodes.filter(gn => gn.completed === false).forEach(gn => {
       let count = gn.neighbors.filter(n => n !== null && !n.node.completed)
         .length;
@@ -639,6 +643,8 @@ module.exports = function (puzzle) {
       console.log("--------SOLVED---------");
       return [true, showGrid()];
     }
+
+    currentPuzzle = puzzleToString();
   }
   return [false, showGrid()];
 
@@ -662,6 +668,7 @@ module.exports = function (puzzle) {
     }
     return visitedNodes;
   }
+
 
   function cleanNeighbors(gn) {
     let newNeighbors = [
@@ -750,6 +757,10 @@ module.exports = function (puzzle) {
       });
       neighbor.node.completed = true;
       console.log(`completed ${neighbor.node.position}`);
+
+      graphNodes.forEach(gn => {
+        cleanNeighbors(gn);
+      })
     }
 
     console.log(
@@ -873,5 +884,30 @@ module.exports = function (puzzle) {
     display.forEach(row => console.log(row));
     console.log("------------");
     return display;
+  }
+
+
+  function puzzleToString() {
+    let display = [];
+    puzzle.forEach(row => display.push(" ".repeat(row.length)));
+
+    for (let i = 0; i < puzzle.length; i++) {
+      for (let j = 0; j < puzzle.length; j++) {
+        if (
+          puzzle[i][j] > 0 ||
+          puzzle[i][j] === "=" ||
+          puzzle[i][j] === "-" ||
+          puzzle[i][j] === "$" ||
+          puzzle[i][j] === "|"
+        ) {
+          // place value inside string at correct position
+          display[i] =
+            display[i].slice(0, j) +
+            puzzle[i][j] +
+            display[i].slice(j + 1, puzzle.length);
+        }
+      }
+    }
+    return JSON.stringify(display);
   }
 };
