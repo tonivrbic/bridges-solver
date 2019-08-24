@@ -1,5 +1,6 @@
 import { puzzles } from './puzzles-copy';
 import { solver2 } from './solver2';
+import { showPuzzle } from './utils';
 
 let stringPuzzle = puzzles[18].map(row => {
     return row.map(item => item.toString());
@@ -23,14 +24,18 @@ for (let i = 0; i < puzzles.length; i++) {
 
     let size = getSize(stringPuzzle);
     if (result.solved === false) {
-        console.log(`%c ❌ ${i}. not solved ${size.rows}x${size.columns}`, 'color: red;');
+        console.log(`%c❌ ${i}. not solved ${size.rows}x${size.columns}`, 'color: red;');
+        result.steps.forEach((step, i) => {
+            console.log(`Iteration ${i + 1}`);
+            showPuzzle(step)
+        })
     } else {
-        console.log(`%c ✔ ${i}. solved ${size.rows}x${size.columns} in ${duration}ms`, 'color: green;');
+        console.log(`%c✔ ${i}. solved ${size.rows}x${size.columns} in ${duration}ms`, 'color: green;');
     }
 }
 
 let solvedNum = results.filter(x => x.solved === true).length;
-console.log(`Solved ${solvedNum}/${puzzles.length}`);
+console.log(`%cSolved ${solvedNum}/${puzzles.length} ${solvedNum === puzzles.length ? '🎉🥳🎈' : '😥'}`, 'font-weight: bold;');
 
 function getSize(puzzle: string[][]) {
     return {

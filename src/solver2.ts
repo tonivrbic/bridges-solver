@@ -36,7 +36,7 @@ export function solverStep(puzzle: Puzzle) {
 
 export function solver2(puzzle: Puzzle) {
     let solved = false;
-    let stepCount = 1;
+    let steps = [];
     let oldPuzzle = '';
     let newPuzzle = JSON.stringify(puzzle);
     // console.log(`Initial puzzle:`)
@@ -46,12 +46,16 @@ export function solver2(puzzle: Puzzle) {
         // here goes solving
 
         solved = solverStep(puzzle);
+        newPuzzle = JSON.stringify(puzzle)
+        steps.push(JSON.parse(newPuzzle));
+
+        if (solved) {
+            break;
+        }
 
         // console.log(`Puzzle iteration ${stepCount}:`)
         // showPuzzle(puzzle);
 
-        stepCount++;
-        newPuzzle = JSON.stringify(puzzle)
     }
 
     // if (solved) {
@@ -60,7 +64,7 @@ export function solver2(puzzle: Puzzle) {
     //     console.log('%c NOT SOLVED', 'color: red;')
     // }
 
-    return { solved, solution: puzzle };
+    return { solved: solved, solution: puzzle, steps: steps };
 }
 
 // export const solver = puzzleEmpty => {

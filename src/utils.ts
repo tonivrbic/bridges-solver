@@ -211,7 +211,7 @@ export function showPuzzle(puzzle: Puzzle) {
             }
         }
     }
-    display.forEach(row => console.log(row));
+    display.forEach(row => console.log(`%c ${row}`, "font-family: monospace;"));
     console.log('----------------------------------');
     return display;
 }
