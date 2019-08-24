@@ -21,7 +21,8 @@ export function one(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
     }
 
     // make a connection to one bridge that has not the value 1
-    if (neighbors.filter(x => x.node.value > 1).length === 1) {
+    if (node.value === 1 && neighbors.filter(x => x.node.value > 1).length === 1
+    ) {
         return connectTo(node, neighbors.filter(x => x.node.value > 1), 1, puzzle);
     }
 
