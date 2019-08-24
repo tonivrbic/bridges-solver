@@ -1,11 +1,11 @@
 import { puzzles } from './puzzles-copy';
 import { solver2 } from './solver2';
 
-let stringPuzzle = puzzles[21].map(row => {
-    return row.map(item => item.toString());
-})
+// let stringPuzzle = puzzles[21].map(row => {
+//     return row.map(item => item.toString());
+// })
 
-solver2(stringPuzzle);
+// solver2(stringPuzzle);
 
 let results = [];
 for (let i = 0; i < puzzles.length; i++) {
