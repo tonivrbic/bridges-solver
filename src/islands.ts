@@ -95,6 +95,8 @@ function dynamicConnect(value: number, node: GraphNode, neighbors: Neighbor[], p
     let neighborsWithoutOne = neighbors.filter(x => getBridgesRemaining(x.node) !== 1)
     let neighborsWithOne = neighbors.filter(x => getBridgesRemaining(x.node) === 1)
 
+    let canAdd = new Set(neighbors.map(x => Math.min(getBridgesRemaining(x.node) - x.bridges, 2)))
+
     // connect to all remaining with one bridge
     if (unique.size === 1 &&
         unique.has(1) &&
@@ -118,6 +120,12 @@ function dynamicConnect(value: number, node: GraphNode, neighbors: Neighbor[], p
         && neighbors.length === 3
         && neighborsWithOne.length > 1) {
         return connectTo(node, neighborsWithoutOne, 1, puzzle);
+    }
+
+    if (canAdd.size === 1
+        && canAdd.has(1)
+        && value - getBridges(node) === neighbors.length) {
+        return connectTo(node, neighbors, 1, puzzle, true)
     }
 
 
