@@ -1,7 +1,7 @@
 import { puzzles } from './puzzles-copy';
 import { solver2 } from './solver2';
 
-let stringPuzzle = puzzles[28].map(row => {
+let stringPuzzle = puzzles[24].map(row => {
     return row.map(item => item.toString());
 })
 
