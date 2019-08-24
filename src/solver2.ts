@@ -26,9 +26,9 @@ export function solverStep(puzzle: Puzzle) {
 
     if (newBridges === 0 && getSubgraph(graph[0]).length < graph.length) {
         let bridgeAdded = testGraph(graph, puzzle);
-        if (bridgeAdded) {
-            console.log('Test added one bridge')
-        }
+        // if (bridgeAdded) {
+        //     console.log('Test added one bridge')
+        // }
     }
 
     return getNotCompletedNodes(graph).length === 0;
@@ -39,28 +39,28 @@ export function solver2(puzzle: Puzzle) {
     let stepCount = 1;
     let oldPuzzle = '';
     let newPuzzle = JSON.stringify(puzzle);
-    console.log(`Initial puzzle:`)
-    showPuzzle(puzzle);
+    // console.log(`Initial puzzle:`)
+    // showPuzzle(puzzle);
     while (oldPuzzle !== newPuzzle) {
         oldPuzzle = newPuzzle;
         // here goes solving
 
         solved = solverStep(puzzle);
 
-        console.log(`Puzzle iteration ${stepCount}:`)
-        showPuzzle(puzzle);
+        // console.log(`Puzzle iteration ${stepCount}:`)
+        // showPuzzle(puzzle);
 
         stepCount++;
         newPuzzle = JSON.stringify(puzzle)
     }
 
-    if (solved) {
-        console.log('%c SOLVED', 'color: green;')
-    } else {
-        console.log('%c NOT SOLVED', 'color: red;')
-    }
+    // if (solved) {
+    //     console.log('%c SOLVED', 'color: green;')
+    // } else {
+    //     console.log('%c NOT SOLVED', 'color: red;')
+    // }
 
-    return solved;
+    return { solved, solution: puzzle };
 }
 
 // export const solver = puzzleEmpty => {

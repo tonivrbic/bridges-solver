@@ -139,7 +139,7 @@ export function cleanNeighbors(node: GraphNode, puzzle: Puzzle) {
         const element = newNeighbors[i];
         if (element === 0 && node.neighbors[i] !== null) {
             const neighborIndex = calculateIndex(i);
-            console.log(`cleaned ${node.position} from ${i}`);
+            // console.log(`cleaned ${node.position} from ${i}`);
             node.neighbors[i].node.neighbors[neighborIndex] = null;
             node.neighbors[i] = null;
         }
