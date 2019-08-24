@@ -37,7 +37,7 @@ export function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
         return connectTo(node, neighbors, bridges === 1 ? 1 : 2, puzzle);
     }
 
-    if (neighbors.length === 2 && neighbors.every(x => x.node.value === 2)) {
+    if (node.value === 2 && neighbors.length === 2 && neighbors.every(x => x.node.value === 2)) {
         return connectTo(node, neighbors, 1, puzzle);
     }
 
