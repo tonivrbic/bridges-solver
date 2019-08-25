@@ -4,7 +4,7 @@
   "description": "This package allows you to solve the popular japanese puzzle Hashiwokakero (also known as Bridges, and Hashi).",
   "main": "lib/index.cjs.js",
   "module": "lib/index.js",
-  "types": "lib/src/index.d.ts",
+  "types": "lib/index.d.ts",
   "dependencies": {},
   "devDependencies": {
     "colors": "^1.3.3",
