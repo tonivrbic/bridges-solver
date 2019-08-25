@@ -1,8 +1,12 @@
 {
-    "compilerOptions": {
-        "target": "esnext",
-        "module": "commonjs",
-        "outDir": "out",
-        "sourceMap": true
-    }
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "outDir": "./out",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "./out",
+    "moduleResolution": "node"
+  },
+  "exclude": ["lib/**/*", "out/**/*"]
 }
