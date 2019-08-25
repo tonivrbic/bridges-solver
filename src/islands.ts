@@ -95,6 +95,7 @@ function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
   return 0;
 }
 
+/** Connect all nodes other than 1 and 2 to its neighbors. */
 function others(
   value: number,
   node: GraphNode,
@@ -108,13 +109,13 @@ function others(
   }
 
   const {
-    one: neighborsWithOne,
-    other: neighborsWithoutOne
+    one: neighborsWithValueOne,
+    other: neighborsWithoutValueOne
   } = separateNeighbors(neighbors);
 
   // connect to all remaining with one bridge
-  if (neighbors.length === neighborsWithOne.length) {
-    return connectTo(node, neighborsWithOne, 1, puzzle, true);
+  if (neighbors.length === neighborsWithValueOne.length) {
+    return connectTo(node, neighborsWithValueOne, 1, puzzle, true);
   }
 
   // if there is a 4 with three neighbors where one has 1, than connect to others
@@ -122,46 +123,47 @@ function others(
   if (
     ((value === 4 && neighbors.length === 3) ||
       (value === 6 && neighbors.length === 4)) &&
-    neighborsWithOne.length === 1
+    neighborsWithValueOne.length === 1
   ) {
-    return connectTo(node, neighborsWithoutOne, 1, puzzle);
+    return connectTo(node, neighborsWithoutValueOne, 1, puzzle);
   }
 
-  if (
-    value === 4 &&
-    getBridgesRemaining(node) >= 3 &&
-    neighbors.length === 3 &&
-    neighborsWithOne.length > 1
-  ) {
-    return connectTo(node, neighborsWithoutOne, 1, puzzle);
-  }
-
-  const remainingWithOne = neighbors.filter(
+  const canAddOneBridge = neighbors.filter(
     x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges) === 1
   );
-  const remainingWithoutOne = neighbors.filter(
+  const canAddTwoBridges = neighbors.filter(
     x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges) !== 1
   );
-  const canAdd = new Set(
-    neighbors.map(x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges))
-  );
 
+  // if connecting to every neighbor completes the island (only when the neighbors can
+  // receive one bridge)
   if (
-    canAdd.size === 1 &&
-    canAdd.has(1) &&
+    canAddOneBridge.length === neighbors.length &&
     value - getBridges(node) === neighbors.length
   ) {
     return connectTo(node, neighbors, 1, puzzle, true);
   }
 
+  /**
+   * In a situation like this:
+   * 3-2 3-3
+   * |     |
+   * |   1 |
+   * | 3   4
+   * |   2 |
+   * 2 1 | |
+   *  1--4-3
+   *
+   * The 3 in the middle must have at least one connection to the
+   * 4 on the right.
+   */
   if (
-    value === 3 &&
-    canAdd.size === 2 &&
-    neighbors.length === 3 &&
-    remainingWithOne.length === 2 &&
+    value === neighbors.length &&
+    canAddTwoBridges.length === 1 &&
+    canAddOneBridge.length === value - 1 &&
     getBridges(node) === 0
   ) {
-    return connectTo(node, remainingWithoutOne, 1, puzzle);
+    return connectTo(node, canAddTwoBridges, 1, puzzle);
   }
 
   return 0;

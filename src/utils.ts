@@ -1,5 +1,9 @@
 import { GraphNode, Puzzle } from "./models";
 
+/**
+ * Tries to find a neighbor by going up.
+ * @returns Return 0 if a neighbor was not found, otherwise returns an object with found neighbor
+ */
 export function traverseUp(puzzle: Puzzle, x: number, y: number) {
   for (let row = x - 1; row >= 0; row--) {
     if (puzzle[row][y] === "=" || puzzle[row][y] === "-") {
@@ -17,6 +21,10 @@ export function traverseUp(puzzle: Puzzle, x: number, y: number) {
   return 0;
 }
 
+/**
+ * Tries to find a neighbor by going down.
+ * @returns Return 0 if a neighbor was not found, otherwise returns an object with found neighbor
+ */
 export function traverseDown(puzzle: Puzzle, x: number, y: number) {
   for (let row = x + 1; row < puzzle.length; row++) {
     if (puzzle[row][y] === "=" || puzzle[row][y] === "-") {
@@ -33,6 +41,10 @@ export function traverseDown(puzzle: Puzzle, x: number, y: number) {
   return 0;
 }
 
+/**
+ * Tries to find a neighbor by going right.
+ * @returns Return 0 if a neighbor was not found, otherwise returns an object with found neighbor
+ */
 export function traverseRight(puzzle: Puzzle, x: number, y: number) {
   for (let column = y + 1; column < puzzle.length; column++) {
     if (puzzle[x][column] === "$" || puzzle[x][column] === "|") {
@@ -49,6 +61,10 @@ export function traverseRight(puzzle: Puzzle, x: number, y: number) {
   return 0;
 }
 
+/**
+ * Tries to find a neighbor by going left.
+ * @returns Return 0 if a neighbor was not found, otherwise returns an object with found neighbor
+ */
 export function traverseLeft(puzzle: Puzzle, x: number, y: number) {
   for (let column = y - 1; column >= 0; column--) {
     if (puzzle[x][column] === "$" || puzzle[x][column] === "|") {
@@ -65,24 +81,29 @@ export function traverseLeft(puzzle: Puzzle, x: number, y: number) {
   return 0;
 }
 
+/** Gets the neighbors of a node. */
 export function getNeighbors(node: GraphNode) {
   return node.neighbors.filter(n => !!n);
 }
 
+/** Gets number of not completed bridges.  */
 export function getBridgesNotCompleted(node: GraphNode) {
   return getNeighbors(node)
     .filter(x => !x.done)
     .reduce((a, b) => a + b.bridges, 0);
 }
 
+/** Gets number of bridges. */
 export function getBridges(node: GraphNode) {
   return getNeighbors(node).reduce((a, b) => a + b.bridges, 0);
 }
 
+/** Gets the number of bridges that can be added. */
 export function getBridgesRemaining(node: GraphNode) {
   return node.value - getNeighbors(node).reduce((a, b) => a + b.bridges, 0);
 }
 
+/** Updates the state of the node and its neighbors. */
 export function updateState(node: GraphNode) {
   const neighbors = getNeighbors(node);
   neighbors.filter(x => x.bridges === 2).forEach(x => (x.done = true));
@@ -101,14 +122,23 @@ export function updateState(node: GraphNode) {
   }
 }
 
+/** Updates states for all multiple nodes. */
 export function updateStates(nodes: GraphNode[]) {
   nodes.forEach(n => updateState(n));
 }
 
-export function getNotCompletedNodes(nodes: GraphNode[]) {
-  return nodes.filter(n => !n.completed);
+/** Return not completed nodes from the graph. */
+export function getNotCompletedNodes(graph: GraphNode[]) {
+  return graph.filter(n => !n.completed);
 }
 
+/**
+ * Transforms the node of lower value if possible and returns the neighbors
+ * to whom a connection can be made.
+ *
+ * For example: If the node with value 4 has a connection with two bridges to another node,
+ * than we can say that this node has a value of 2.
+ */
 export function transformNode(node: GraphNode) {
   let value = node.value;
   const allNeighbors = getNeighbors(node);
@@ -121,6 +151,7 @@ export function transformNode(node: GraphNode) {
   };
 }
 
+/** Adds bridges to the puzzle. */
 export function fillPuzzleWithBridge(
   puzzle: Puzzle,
   x1: number,
@@ -158,6 +189,7 @@ export function fillPuzzleWithBridge(
   }
 }
 
+/** Finds index of the neighbor. */
 function calculateIndex(index: number) {
   if (index === 2) {
     return 0;
@@ -168,6 +200,7 @@ function calculateIndex(index: number) {
   }
 }
 
+/** Traverses the puzzle and cleans up neighbors from graph that are no longer neighbors. */
 export function cleanNeighbors(node: GraphNode, puzzle: Puzzle) {
   const newNeighbors = [
     traverseUp(puzzle, node.position[0], node.position[1]),
@@ -179,7 +212,6 @@ export function cleanNeighbors(node: GraphNode, puzzle: Puzzle) {
     const element = newNeighbors[i];
     if (element === 0 && node.neighbors[i] !== null) {
       const neighborIndex = calculateIndex(i);
-      // console.log(`cleaned ${node.position} from ${i}`);
       node.neighbors[i].node.neighbors[neighborIndex] = null;
       node.neighbors[i] = null;
     }
@@ -196,11 +228,13 @@ export function cleanNeighbors(node: GraphNode, puzzle: Puzzle) {
   }
 }
 
+/** For all nodes traverses the puzzle and cleans up neighbors from graph that are no longer neighbors. */
 export function cleanGraph(graph: GraphNode[], puzzle: Puzzle) {
   updateStates(graph);
   graph.forEach(node => cleanNeighbors(node, puzzle));
 }
 
+/** From a starting nodes finds all the nodes that are connected in a graph. */
 export function getSubGraph(node: GraphNode) {
   const toVisit: GraphNode[] = [];
   const visitedNodes: GraphNode[] = [];
@@ -225,14 +259,17 @@ export function getSubGraph(node: GraphNode) {
   return visitedNodes;
 }
 
+/** Return true if a graph is closed i.e. every node is complete */
 export function isGraphClosed(nodes: GraphNode[]) {
   return nodes.every(x => x.completed === true);
 }
 
+/** Clamp a value between min and max. */
 export function clamp(min: number, max: number, value: number) {
   return Math.max(min, Math.min(value, max));
 }
 
+/** Detects bridge characters in the puzzle. */
 function detectBridges(field: string) {
   if (field === "=" || field === "$") {
     return 2;
