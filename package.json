@@ -1,6 +1,6 @@
 {
   "name": "bridges-solver",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "This package allows you to solve the popular japanese puzzle Hashiwokakero (also known as Bridges, and Hashi).",
   "main": "lib/index.cjs.js",
   "module": "lib/index.js",
