@@ -7,6 +7,9 @@ import {
   updateStates
 } from "./utils";
 
+/**
+ * Create a graph from the puzzle.
+ */
 export function createGraph(puzzle: Puzzle) {
   const extractedIslands = extractIslands(puzzle);
 
@@ -19,6 +22,9 @@ export function createGraph(puzzle: Puzzle) {
   return nodes;
 }
 
+/**
+ * Extract islands from the puzzle.
+ */
 function extractIslands(puzzle: Puzzle) {
   const islands: ExtractedIsland[] = [];
   puzzle.forEach((row, i) => {
@@ -34,12 +40,17 @@ function extractIslands(puzzle: Puzzle) {
   return islands;
 }
 
+/**
+ * Creates nodes for the graph from extracted islands.
+ */
 function createNodes(puzzle: Puzzle, extractedIslands: ExtractedIsland[]) {
   return extractedIslands.map((item, index) => {
     const up = traverseUp(puzzle, item.position[0], item.position[1]);
     const right = traverseRight(puzzle, item.position[0], item.position[1]);
     const down = traverseDown(puzzle, item.position[0], item.position[1]);
     const left = traverseLeft(puzzle, item.position[0], item.position[1]);
+
+    // get neighbors of node
     const neighbors = [];
     for (const i of [up, right, down, left]) {
       if (typeof i === "number") {
@@ -53,6 +64,7 @@ function createNodes(puzzle: Puzzle, extractedIslands: ExtractedIsland[]) {
         });
       }
     }
+
     return {
       completed: false,
       id: index,
@@ -63,6 +75,9 @@ function createNodes(puzzle: Puzzle, extractedIslands: ExtractedIsland[]) {
   });
 }
 
+/**
+ * Creates connections between nodes.
+ */
 function connectNodes(graphNodes: GraphNode[]) {
   graphNodes.forEach(item => {
     item.neighbors.forEach((v, i) => {

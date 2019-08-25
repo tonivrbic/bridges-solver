@@ -68,6 +68,20 @@ export function getNeighbors(node: GraphNode) {
   return node.neighbors.filter(n => !!n);
 }
 
+export function getBridgesNotCompleted(node: GraphNode) {
+  return getNeighbors(node)
+    .filter(x => !x.done)
+    .reduce((a, b) => a + b.bridges, 0);
+}
+
+export function getBridges(node: GraphNode) {
+  return getNeighbors(node).reduce((a, b) => a + b.bridges, 0);
+}
+
+export function getBridgesRemaining(node: GraphNode) {
+  return node.value - getNeighbors(node).reduce((a, b) => a + b.bridges, 0);
+}
+
 export function updateState(node: GraphNode) {
   const neighbors = getNeighbors(node);
   neighbors.filter(x => x.bridges === 2).forEach(x => (x.done = true));
@@ -186,7 +200,7 @@ export function cleanGraph(graph: GraphNode[], puzzle: Puzzle) {
   graph.forEach(node => cleanNeighbors(node, puzzle));
 }
 
-export function getSubgraph(node: GraphNode) {
+export function getSubGraph(node: GraphNode) {
   const toVisit: GraphNode[] = [];
   const visitedNodes: GraphNode[] = [];
   const visitedNodeIds: number[] = [];
@@ -212,6 +226,10 @@ export function getSubgraph(node: GraphNode) {
 
 export function isGraphClosed(nodes: GraphNode[]) {
   return nodes.every(x => x.completed === true);
+}
+
+export function clamp(min: number, max: number, value: number) {
+  return Math.max(min, Math.min(value, max));
 }
 
 function detectBridges(field: string) {

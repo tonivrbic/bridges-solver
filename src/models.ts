@@ -1,3 +1,6 @@
+/**
+ * The island as a node in the graph.
+ */
 export interface GraphNode {
   id: number;
   completed: boolean;
@@ -6,6 +9,9 @@ export interface GraphNode {
   neighbors: Neighbor[];
 }
 
+/**
+ * An islands neighbor in the graph.
+ */
 export interface Neighbor {
   bridges: number;
   position: number[];
@@ -18,10 +24,19 @@ export interface ExtractedIsland {
   value: string;
 }
 
+/**
+ * The result of the solver function.
+ */
 export interface SolverResult {
+  /** True if the puzzle is solved. */
   solved: boolean;
+  /** The solution of the puzzle. */
   solution: Puzzle;
+  /**
+   * All intermediate state of the puzzle during the solving process.
+   */
   steps: Puzzle[];
 }
 
+/** Alias for Puzzle */
 export type Puzzle = string[][];

@@ -1,12 +1,19 @@
 import { GraphNode, Neighbor, Puzzle } from "./models";
 import {
+  clamp,
   cleanNeighbors,
   fillPuzzleWithBridge,
+  getBridges,
+  getBridgesRemaining,
   getNeighbors,
   transformNode,
   updateState
 } from "./utils";
 
+/**
+ * Tries to connect the node to its neighbors.
+ * @param value The current value of the island.
+ */
 export const solveFor = (
   value: number,
   puzzle: Puzzle,
@@ -22,7 +29,8 @@ export const solveFor = (
   }
 };
 
-export function one(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
+/** Connect a node represented as 1 to its neighbors. */
+function one(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
   // make a connection with 1 bridge to the neighbor
   if (neighbors.length === 1) {
     return connectTo(node, neighbors, 1, puzzle);
@@ -39,7 +47,8 @@ export function one(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
   return 0;
 }
 
-export function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
+/** Connect a node represented as 2 to its neighbors. */
+function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
   // make a connection with 2 bridges to the neighbor
   if (neighbors.length === 1) {
     const bridges =
@@ -47,6 +56,8 @@ export function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
     return connectTo(node, neighbors, bridges === 1 ? 1 : 2, puzzle);
   }
 
+  // in a situation where an island with 2 has two neighbors with values of 2, than connect
+  // to those neighbors with one bridge
   if (
     node.value === 2 &&
     neighbors.length === 2 &&
@@ -56,6 +67,8 @@ export function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
   }
 
   const unique = new Set(neighbors.map(x => getBridgesRemaining(x.node)));
+
+  // in a situation where both neighbors are missing one bridge, than connect to them
   if (
     neighbors.length === 2 &&
     unique.size === 1 &&
@@ -65,6 +78,8 @@ export function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
     return connectTo(node, neighbors, 1, puzzle);
   }
 
+  // in a situation where an island with 2 has one neighbor with 1 and one neighbor with more than 1,
+  // than connect with one bridge to the neighbor with more than 1
   if (
     neighbors.length === 2 &&
     unique.size === 2 &&
@@ -76,89 +91,38 @@ export function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
     );
     return connectTo(node, [neighborWithTwo], 1, puzzle);
   }
+
   return 0;
 }
 
-export function others(
+function others(
   value: number,
   node: GraphNode,
   neighbors: Neighbor[],
   puzzle: Puzzle
 ) {
-  // let bridgesRemaining = neighbors.map(x => getBridgesRemaining(x));
-  // let unique = new Set(bridgesRemaining);
-  // if (unique.size === 1 && unique.has(1)
-  //     && getBridges(node) === 0
-  // ) {
-  //     let bridgesCount = 0;
-  //     // neighbors.forEach(neighbor => {
-  //     bridgesCount += connectTo(node, neighbors, 1, puzzle);
-  //     // })
-  //     return bridgesCount;
-  // }
-
-  // make a connection with 1 bridge to all two neighbors
-  return dynamicConnect(value, node, neighbors, puzzle);
-}
-
-export function getBridgesNotCompleted(node: GraphNode) {
-  return getNeighbors(node)
-    .filter(x => !x.done)
-    .reduce((a, b) => a + b.bridges, 0);
-}
-
-export function getBridges(node: GraphNode) {
-  return getNeighbors(node).reduce((a, b) => a + b.bridges, 0);
-}
-
-export function getBridgesRemaining(node: GraphNode) {
-  return node.value - getNeighbors(node).reduce((a, b) => a + b.bridges, 0);
-}
-
-function dynamicConnect(
-  value: number,
-  node: GraphNode,
-  neighbors: Neighbor[],
-  puzzle: Puzzle
-) {
+  // a 3 with two neighbors, a 5 with 3 neighbors and a 7 with four neighbors connect with one bridge
+  // a 4 with two neighbors, a 6 with 3 neighbors and a 8 with four neighbors connect with two bridges
   if (neighbors.length === Math.ceil(value / 2)) {
     return connectTo(node, neighbors, value % 2 === 0 ? 2 : 1, puzzle);
   }
 
-  // if there is a 4 with three neighbors where one has 1, than connect to others
-  // if there is a 6 with four neighbors where one has 1, than connect to others
-  const unique = new Set(neighbors.map(x => getBridgesRemaining(x.node)));
-  // let neighborsWithoutOne = neighbors.filter(x => getBridgesRemaining(x.node) !== 1)
-  // let neighborsWithOne = neighbors.filter(x => getBridgesRemaining(x.node) === 1)
-
   const {
     one: neighborsWithOne,
     other: neighborsWithoutOne
-  } = seperateNeighbors(neighbors);
-
-  const remainingWithOne = neighbors.filter(
-    x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges) === 1
-  );
-  const remainingWithoutOne = neighbors.filter(
-    x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges) !== 1
-  );
-  const canAdd = new Set(
-    neighbors.map(x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges))
-  );
+  } = separateNeighbors(neighbors);
 
   // connect to all remaining with one bridge
-  if (
-    neighbors.length === neighborsWithOne.length
-    // && getBridges(node) === 0
-  ) {
+  if (neighbors.length === neighborsWithOne.length) {
     return connectTo(node, neighborsWithOne, 1, puzzle, true);
   }
 
+  // if there is a 4 with three neighbors where one has 1, than connect to others
+  // if there is a 6 with four neighbors where one has 1, than connect to others
   if (
     ((value === 4 && neighbors.length === 3) ||
       (value === 6 && neighbors.length === 4)) &&
     neighborsWithOne.length === 1
-    // && getBridges(node) < 2
   ) {
     return connectTo(node, neighborsWithoutOne, 1, puzzle);
   }
@@ -171,6 +135,16 @@ function dynamicConnect(
   ) {
     return connectTo(node, neighborsWithoutOne, 1, puzzle);
   }
+
+  const remainingWithOne = neighbors.filter(
+    x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges) === 1
+  );
+  const remainingWithoutOne = neighbors.filter(
+    x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges) !== 1
+  );
+  const canAdd = new Set(
+    neighbors.map(x => clamp(1, 2, getBridgesRemaining(x.node) - x.bridges))
+  );
 
   if (
     canAdd.size === 1 &&
@@ -190,27 +164,17 @@ function dynamicConnect(
     return connectTo(node, remainingWithoutOne, 1, puzzle);
   }
 
-  // if (unique.size === 1 && unique.has(1) && value - getBridges(node) === neighbors.length) {
-  //     return connectTo(node, neighborsWithOne, 1, puzzle, true);
-  // }
-
   return 0;
 }
 
-function clamp(min: number, max: number, value: number) {
-  return Math.max(min, Math.min(value, max));
-}
-
-function seperateNeighbors(neighbors: Neighbor[]) {
+/**
+ * Separates neighbors based on the number of bridges that can be connected to them.
+ */
+function separateNeighbors(neighbors: Neighbor[]) {
   const onlyOne: Neighbor[] = [];
   const moreThanOne: Neighbor[] = [];
   neighbors.forEach(neighbor => {
-    if (
-      transformNode(neighbor.node).value === 1
-      // neighbor.node.value === 1 ||
-      // (getNeighbors(neighbor.node).filter(x => !x.done).length === 1
-      //     && getBridgesRemaining(neighbor.node) === 1)
-    ) {
+    if (transformNode(neighbor.node).value === 1) {
       onlyOne.push(neighbor);
     } else {
       moreThanOne.push(neighbor);
@@ -219,6 +183,14 @@ function seperateNeighbors(neighbors: Neighbor[]) {
   return { one: onlyOne, other: moreThanOne };
 }
 
+/**
+ * Connect an island to supplied neighbors with specified number of bridges.
+ * @param node Island that connects.
+ * @param neighbors List of neighbors to whom a connection will be made
+ * @param bridges Number of bridges
+ * @param puzzle The current puzzle
+ * @param append Add the bridge to the already existing bridge instead of overriding it.
+ */
 function connectTo(
   node: GraphNode,
   neighbors: Neighbor[],
@@ -235,12 +207,12 @@ function connectTo(
       connections += bridges - neighbor.bridges;
       neighbor.bridges = bridges;
     }
+
+    // set the bridge from the other direction
     const reverseConnection = getNeighbors(neighbor.node).find(
       n => n.node.id === node.id
     );
-    if (!!reverseConnection) {
-      reverseConnection.bridges = neighbor.bridges;
-    }
+    reverseConnection.bridges = neighbor.bridges;
 
     fillPuzzleWithBridge(
       puzzle,
@@ -250,7 +222,6 @@ function connectTo(
       neighbor.position[1],
       bridges
     );
-    // updateState(x.node);
   });
   updateState(node);
 
