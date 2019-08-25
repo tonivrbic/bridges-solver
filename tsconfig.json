@@ -6,7 +6,9 @@
     "sourceMap": true,
     "declaration": true,
     "declarationDir": "./out",
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "incremental": true,
+    "tsBuildInfoFile": "./out/.tsbuildinfo"
   },
   "exclude": ["lib/**/*", "out/**/*"]
 }

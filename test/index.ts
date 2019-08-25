@@ -19,3 +19,7 @@ for (let i = 0; i < puzzles.length; i++) {
 }
 
 showSummary(results, puzzles.length);
+
+if (results.some(x => !x.solved)) {
+  throw new Error("Test did not pass");
+}
