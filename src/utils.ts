@@ -13,6 +13,7 @@ export function traverseUp(puzzle: Puzzle, x: number, y: number) {
       };
     }
   }
+
   return 0;
 }
 

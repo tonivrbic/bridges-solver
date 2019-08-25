@@ -223,8 +223,8 @@ function connectTo(
       bridges
     );
   });
-  updateState(node);
 
+  updateState(node);
   cleanNeighbors(node, puzzle);
 
   return connections;
