@@ -5,16 +5,20 @@ export default {
   input: "./src/index.ts",
   output: [
     {
-      file: "lib/solver.common.js",
+      file: "lib/index.cjs.js",
       format: "cjs"
     },
     {
-      file: "lib/solver.esm.js",
+      file: "lib/index.js",
       format: "esm"
     }
   ],
   plugins: [
     del({ targets: "lib/*" }),
-    typescript({ tsconfigOverride: { compilerOptions: { module: "es2015" } } })
+    typescript({
+      tsconfigOverride: {
+        compilerOptions: { module: "es2015" }
+      }
+    })
   ]
 };
