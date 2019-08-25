@@ -1,4 +1,4 @@
-import { solver } from "../src/main";
+import { solver } from "../src";
 import { SolverResult } from "../src/models";
 import { getSize, showResult, showSummary } from "./helpers";
 import { puzzles } from "./puzzles";
