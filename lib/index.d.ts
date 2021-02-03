@@ -15,11 +15,25 @@ declare type Puzzle = string[][];
  * Iterates through all islands and adds new bridges. This function should be called
  * multiple times until the puzzle is solved.
  */
-declare function solverStep(puzzle: Puzzle): boolean;
+declare function solverStep(puzzle: Puzzle, depth: number): boolean;
 /**
  * Solves the bridges puzzle.
  * @param bridgesPuzzle A 2D matrix representing the puzzle where zeros represent empty spaces.
+ * @param depth The recursion depth of the algorithm. Default value is 3.
  */
-declare function solver(bridgesPuzzle: number[][]): SolverResult;
+declare function solver(
+  bridgesPuzzle: number[][],
+  depth?: number
+): SolverResult;
+/**
+ * Loops through solverSteps until the puzzle is solved.
+ */
+declare function solveIterative(
+  puzzle: string[][],
+  depth: number
+): {
+  solved: boolean;
+  steps: any[];
+};
 
-export { solver, solverStep };
+export { solveIterative, solver, solverStep };

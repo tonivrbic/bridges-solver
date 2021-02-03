@@ -1,3 +1,4 @@
+import { solveIterative } from ".";
 import { createGraph } from "./graph";
 import { solveFor } from "./islands";
 import { GraphNode, Neighbor, Puzzle } from "./models";
@@ -5,31 +6,24 @@ import {
   cleanGraph,
   getBridges,
   getNeighbors,
-  getNotCompletedNodes,
-  getSubGraph,
-  isGraphClosed
+  getNotCompletedNodes
 } from "./utils";
 
 /**
  * Tries with brute force to find a new possible connection to make.
  */
-export function connectGraphs(graph: GraphNode[], puzzle: Puzzle) {
+export function bruteForceNewConnection(
+  graph: GraphNode[],
+  puzzle: Puzzle,
+  depth: number
+) {
   for (const node of getNotCompletedNodes(graph)) {
-    const results: { neighbor: Neighbor; openGraph: boolean }[] = [];
     for (const neighbor of getNeighbors(node)) {
-      const result = tryToConnect(puzzle, node, neighbor);
-      results.push({ neighbor, openGraph: result });
-    }
-
-    // after trying all connections from a node to its neighbor and only one of the connections
-    // resulted in a non closed final graph, than use that connection and return
-    if (results.length > 1 && results.filter(x => x.openGraph).length === 1) {
-      connectToNeighbor(
-        node,
-        results.find(x => x.openGraph === true).neighbor,
-        puzzle
-      );
-      return true;
+      const result = tryToConnect(puzzle, node, neighbor, depth);
+      if (result === true) {
+        connectToNeighbor(node, neighbor, puzzle);
+        return true;
+      }
     }
   }
 
@@ -40,7 +34,16 @@ export function connectGraphs(graph: GraphNode[], puzzle: Puzzle) {
  * Tries to make a connection form the node to the neighbor.
  * @returns Returns false if the connection created a non final closed graph, otherwise true
  */
-function tryToConnect(puzzle: Puzzle, node: GraphNode, neighbor: Neighbor) {
+function tryToConnect(
+  puzzle: Puzzle,
+  node: GraphNode,
+  neighbor: Neighbor,
+  depth: number
+) {
+  if (depth < 0) {
+    return false;
+  }
+
   const puzzleClone = clone(puzzle);
   const graph = createGraph(puzzleClone);
   const testNode = graph.find(x => x.id === node.id);
@@ -51,13 +54,9 @@ function tryToConnect(puzzle: Puzzle, node: GraphNode, neighbor: Neighbor) {
   connectToNeighbor(testNode, testNeighbor, puzzleClone);
   cleanGraph(graph, puzzleClone);
 
-  // if the created connection resulted in a closed graph return false
-  const subGraph = getSubGraph(testNode);
-  if (subGraph.length < graph.length && isGraphClosed(subGraph)) {
-    return false;
-  }
+  const { solved } = solveIterative(puzzleClone, --depth);
 
-  return true;
+  return solved;
 }
 
 /**

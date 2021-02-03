@@ -132,6 +132,11 @@ export function getNotCompletedNodes(graph: GraphNode[]) {
   return graph.filter(n => !n.completed);
 }
 
+/** Returns true if the puzzle is completed */
+export function isPuzzleCompleted(graph: GraphNode[]) {
+  return getNotCompletedNodes(graph).length === 0;
+}
+
 /**
  * Transforms the node of lower value if possible and returns the neighbors
  * to whom a connection can be made.

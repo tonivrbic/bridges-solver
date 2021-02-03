@@ -1,11 +1,17 @@
 {
   "name": "bridges-solver",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "This package allows you to solve the popular japanese puzzle Hashiwokakero (also known as Bridges, and Hashi).",
   "main": "lib/index.cjs.js",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
-  "dependencies": {},
+  "exports": {
+    ".": {
+      "require": "./lib/index.cjs.js",
+      "import": "./lib/index.js",
+      "default": "./lib/index.js"
+    }
+  },
   "devDependencies": {
     "colors": "^1.3.3",
     "husky": "^3.0.4",
@@ -17,7 +23,7 @@
     "rollup-plugin-typescript2": "^0.23.0",
     "tslint": "^5.19.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.5.3"
+    "typescript": "^4.1.3"
   },
   "scripts": {
     "build": "rollup -c && prettier --write ./lib/**/*.{ts,js}",

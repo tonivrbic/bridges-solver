@@ -1,19 +1,17 @@
 import { createGraph } from "./graph";
 import { solveFor } from "./islands";
 import { Puzzle, SolverResult } from "./models";
-import { connectGraphs } from "./predict";
-import {
-  cleanGraph,
-  getNotCompletedNodes,
-  getSubGraph,
-  transformNode
-} from "./utils";
+import { bruteForceNewConnection } from "./predict";
+import { cleanGraph, getNotCompletedNodes, transformNode } from "./utils";
 
 /**
  * Iterates through all islands and adds new bridges. This function should be called
  * multiple times until the puzzle is solved.
  */
-export function solverStep(puzzle: Puzzle) {
+export function solverStep(puzzle: Puzzle, depth: number) {
+  if (depth < 0) {
+    return false;
+  }
   const graph = createGraph(puzzle);
 
   const nodes = getNotCompletedNodes(graph);
@@ -38,8 +36,9 @@ export function solverStep(puzzle: Puzzle) {
 
   // if no bridge has been added and we have multiple smaller graphs instead of one graph,
   // than try to connect those graphs into one
-  if (newBridges === 0 && getSubGraph(graph[0]).length < graph.length) {
-    connectGraphs(graph, puzzle);
+  if (newBridges === 0 && getNotCompletedNodes(graph).length > 0) {
+    const result = bruteForceNewConnection(graph, puzzle, depth);
+    return result;
   }
 
   // the puzzle is solved when all nodes are completed
@@ -49,13 +48,23 @@ export function solverStep(puzzle: Puzzle) {
 /**
  * Solves the bridges puzzle.
  * @param bridgesPuzzle A 2D matrix representing the puzzle where zeros represent empty spaces.
+ * @param depth The recursion depth of the algorithm. Default value is 3.
  */
-export function solver(bridgesPuzzle: number[][]) {
+export function solver(bridgesPuzzle: number[][], depth: number = 3) {
   // convert the puzzle with numbers to strings
   const puzzle = bridgesPuzzle.map(row => {
     return row.map(item => item.toString());
   });
 
+  const { solved, steps } = solveIterative(puzzle, depth);
+
+  return { solved, solution: puzzle, steps } as SolverResult;
+}
+
+/**
+ * Loops through solverSteps until the puzzle is solved.
+ */
+export function solveIterative(puzzle: string[][], depth: number) {
   let solved = false;
   const steps = [];
   let oldPuzzle = "";
@@ -65,7 +74,7 @@ export function solver(bridgesPuzzle: number[][]) {
   while (oldPuzzle !== newPuzzle) {
     oldPuzzle = newPuzzle;
 
-    solved = solverStep(puzzle);
+    solved = solverStep(puzzle, depth);
 
     newPuzzle = JSON.stringify(puzzle);
 
@@ -78,5 +87,5 @@ export function solver(bridgesPuzzle: number[][]) {
     }
   }
 
-  return { solved, solution: puzzle, steps } as SolverResult;
+  return { solved, steps };
 }

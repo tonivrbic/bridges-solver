@@ -92,6 +92,19 @@ function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
     return connectTo(node, [neighborWithTwo], 1, puzzle);
   }
 
+  // in a situation where an island with 2 has one neighbor whit value 2
+  // and the other with a value more than 2, than connect with one bridge to the larger
+  if (
+    neighbors.length === 2 &&
+    unique.size === 2 &&
+    neighbors.some(x => x.node.value === 2) &&
+    neighbors.some(x => x.node.value > 2) &&
+    neighbors.every(x => x.bridges === 0)
+  ) {
+    const largerNeighbor = neighbors.find(x => x.node.value > 2);
+    return connectTo(node, [largerNeighbor], 1, puzzle);
+  }
+
   return 0;
 }
 
