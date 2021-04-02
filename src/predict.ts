@@ -16,18 +16,18 @@ export function bruteForceNewConnection(
   graph: GraphNode[],
   puzzle: Puzzle,
   depth: number
-) {
+): { solved: boolean; steps?: any[] } {
   for (const node of getNotCompletedNodes(graph)) {
     for (const neighbor of getNeighbors(node)) {
       const result = tryToConnect(puzzle, node, neighbor, depth);
-      if (result === true) {
+      if (result.solved === true) {
         connectToNeighbor(node, neighbor, puzzle);
-        return true;
+        return result;
       }
     }
   }
 
-  return false;
+  return { solved: false };
 }
 
 /**
@@ -39,9 +39,9 @@ function tryToConnect(
   node: GraphNode,
   neighbor: Neighbor,
   depth: number
-) {
+): { solved: boolean; steps?: any[] } {
   if (depth < 0) {
-    return false;
+    return { solved: false };
   }
 
   const puzzleClone = clone(puzzle);
@@ -54,9 +54,9 @@ function tryToConnect(
   connectToNeighbor(testNode, testNeighbor, puzzleClone);
   cleanGraph(graph, puzzleClone);
 
-  const { solved } = solveIterative(puzzleClone, --depth);
+  const result = solveIterative(puzzleClone, --depth);
 
-  return solved;
+  return result;
 }
 
 /**

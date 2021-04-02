@@ -5,47 +5,6 @@ import { bruteForceNewConnection } from "./predict";
 import { cleanGraph, getNotCompletedNodes, transformNode } from "./utils";
 
 /**
- * Iterates through all islands and adds new bridges. This function should be called
- * multiple times until the puzzle is solved.
- */
-export function solverStep(puzzle: Puzzle, depth: number) {
-  if (depth < 0) {
-    return false;
-  }
-  const graph = createGraph(puzzle);
-
-  const nodes = getNotCompletedNodes(graph);
-
-  let newBridges = 0;
-  nodes.forEach(node => {
-    if (!node.completed) {
-      // transform the island to an island of lower value if it has bridges
-      const transformed = transformNode(node);
-
-      newBridges += solveFor(
-        transformed.value,
-        puzzle,
-        node,
-        transformed.neighbors
-      );
-
-      // removes neighbors from graph that are no longer neighbors
-      cleanGraph(graph, puzzle);
-    }
-  });
-
-  // if no bridge has been added and we have multiple smaller graphs instead of one graph,
-  // than try to connect those graphs into one
-  if (newBridges === 0 && getNotCompletedNodes(graph).length > 0) {
-    const result = bruteForceNewConnection(graph, puzzle, depth);
-    return result;
-  }
-
-  // the puzzle is solved when all nodes are completed
-  return getNotCompletedNodes(graph).length === 0;
-}
-
-/**
  * Solves the bridges puzzle.
  * @param bridgesPuzzle A 2D matrix representing the puzzle where zeros represent empty spaces.
  * @param depth The recursion depth of the algorithm. Default value is 3.
@@ -74,7 +33,7 @@ export function solveIterative(puzzle: string[][], depth: number) {
   while (oldPuzzle !== newPuzzle) {
     oldPuzzle = newPuzzle;
 
-    solved = solverStep(puzzle, depth);
+    solved = solverStep(puzzle, depth).solved;
 
     newPuzzle = JSON.stringify(puzzle);
 
@@ -88,4 +47,48 @@ export function solveIterative(puzzle: string[][], depth: number) {
   }
 
   return { solved, steps };
+}
+
+/**
+ * Iterates through all islands and adds new bridges. This function should be called
+ * multiple times until the puzzle is solved.
+ */
+export function solverStep(puzzle: Puzzle, depth: number) {
+  if (depth < 0) {
+    return { solved: false };
+  }
+  const graph = createGraph(puzzle);
+
+  const nodes = getNotCompletedNodes(graph);
+
+  let newBridges = 0;
+  nodes.forEach(node => {
+    if (!node.completed) {
+      // transform the island to an island of lower value if it has bridges
+      const transformed = transformNode(node);
+
+      newBridges += solveFor(
+        transformed.value,
+        puzzle,
+        node,
+        transformed.neighbors
+      );
+
+      // removes neighbors from graph that are no longer neighbors
+      cleanGraph(graph, puzzle);
+    }
+  });
+
+  // if no bridge has been added and we have multiple smaller graphs instead of one graph,
+  // than try to connect those graphs into one
+  if (newBridges === 0 && getNotCompletedNodes(graph).length > 0) {
+    const result = bruteForceNewConnection(graph, puzzle, depth);
+    if (result.solved) {
+      puzzle = result.steps[result.steps.length - 1];
+    }
+    return result;
+  }
+
+  // the puzzle is solved when all nodes are completed
+  return { solved: getNotCompletedNodes(graph).length === 0 };
 }

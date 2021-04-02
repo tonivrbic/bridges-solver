@@ -12,11 +12,6 @@ interface SolverResult {
 declare type Puzzle = string[][];
 
 /**
- * Iterates through all islands and adds new bridges. This function should be called
- * multiple times until the puzzle is solved.
- */
-declare function solverStep(puzzle: Puzzle, depth: number): boolean;
-/**
  * Solves the bridges puzzle.
  * @param bridgesPuzzle A 2D matrix representing the puzzle where zeros represent empty spaces.
  * @param depth The recursion depth of the algorithm. Default value is 3.
@@ -34,6 +29,17 @@ declare function solveIterative(
 ): {
   solved: boolean;
   steps: any[];
+};
+/**
+ * Iterates through all islands and adds new bridges. This function should be called
+ * multiple times until the puzzle is solved.
+ */
+declare function solverStep(
+  puzzle: Puzzle,
+  depth: number
+): {
+  solved: boolean;
+  steps?: any[];
 };
 
 export { solveIterative, solver, solverStep };
