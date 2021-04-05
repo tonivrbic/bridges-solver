@@ -27,7 +27,7 @@ declare function solveIterative(
   puzzle: string[][],
   depth: number
 ): {
-  solved: boolean;
+  solved: any;
   steps: any[];
 };
 /**
@@ -37,9 +37,14 @@ declare function solveIterative(
 declare function solverStep(
   puzzle: Puzzle,
   depth: number
-): {
-  solved: boolean;
-  steps?: any[];
-};
+):
+  | {
+      solved: boolean;
+    }
+  | {
+      puzzle: Puzzle;
+      solved: boolean;
+      steps?: any[];
+    };
 
 export { solveIterative, solver, solverStep };

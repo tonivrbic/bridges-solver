@@ -24,7 +24,7 @@ export function solver(bridgesPuzzle: number[][], depth: number = 3) {
  * Loops through solverSteps until the puzzle is solved.
  */
 export function solveIterative(puzzle: string[][], depth: number) {
-  let solved = false;
+  let result;
   const steps = [];
   let oldPuzzle = "";
   let newPuzzle = JSON.stringify(puzzle);
@@ -33,20 +33,20 @@ export function solveIterative(puzzle: string[][], depth: number) {
   while (oldPuzzle !== newPuzzle) {
     oldPuzzle = newPuzzle;
 
-    solved = solverStep(puzzle, depth).solved;
+    result = solverStep(puzzle, depth);
 
-    newPuzzle = JSON.stringify(puzzle);
+    newPuzzle = JSON.stringify(result.puzzle);
 
     // save a copy of the current puzzle
     steps.push(JSON.parse(newPuzzle));
 
     // exit loop if the puzzle is solved
-    if (solved) {
+    if (result.solved) {
       break;
     }
   }
 
-  return { solved, steps };
+  return { solved: result.solved, steps };
 }
 
 /**
@@ -86,9 +86,9 @@ export function solverStep(puzzle: Puzzle, depth: number) {
     if (result.solved) {
       puzzle = result.steps[result.steps.length - 1];
     }
-    return result;
+    return { ...result, puzzle };
   }
 
   // the puzzle is solved when all nodes are completed
-  return { solved: getNotCompletedNodes(graph).length === 0 };
+  return { solved: getNotCompletedNodes(graph).length === 0, puzzle };
 }
