@@ -1,7 +1,7 @@
-import { solveIterative } from ".";
 import { createGraph } from "./graph";
 import { solveFor } from "./islands";
-import { GraphNode, Neighbor, Puzzle } from "./models";
+import { GraphNode, Neighbor, Puzzle, SolverResult } from "./models";
+import { solveIterative } from "./solveIterative";
 import {
   cleanGraph,
   getBridges,
@@ -16,12 +16,11 @@ export function bruteForceNewConnection(
   graph: GraphNode[],
   puzzle: Puzzle,
   depth: number
-): { solved: boolean; steps?: any[] } {
+): SolverResult {
   for (const node of getNotCompletedNodes(graph)) {
     for (const neighbor of getNeighbors(node)) {
       const result = tryToConnect(puzzle, node, neighbor, depth);
       if (result.solved === true) {
-        connectToNeighbor(node, neighbor, puzzle);
         return result;
       }
     }
@@ -39,7 +38,7 @@ function tryToConnect(
   node: GraphNode,
   neighbor: Neighbor,
   depth: number
-): { solved: boolean; steps?: any[] } {
+): SolverResult {
   if (depth < 0) {
     return { solved: false };
   }

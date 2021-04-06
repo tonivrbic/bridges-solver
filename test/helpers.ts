@@ -3,11 +3,7 @@ import "colors";
 import { Puzzle, SolverResult } from "../src/models";
 
 export function showResult(
-  result: {
-    solved: boolean;
-    solution: string[][];
-    steps: any[];
-  },
+  result: SolverResult,
   puzzleIndex: number,
   size: {
     columns: number;

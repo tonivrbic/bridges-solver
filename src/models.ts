@@ -31,11 +31,11 @@ export interface SolverResult {
   /** True if the puzzle is solved. */
   solved: boolean;
   /** The solution of the puzzle. */
-  solution: Puzzle;
+  solution?: Puzzle;
   /**
    * All intermediate state of the puzzle during the solving process.
    */
-  steps: Puzzle[];
+  steps?: Puzzle[];
 }
 
 /** Alias for Puzzle */
