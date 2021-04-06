@@ -1,8 +1,5 @@
-import { createGraph } from "./graph";
-import { solveFor } from "./islands";
-import { Puzzle, SolverResult } from "./models";
-import { bruteForceNewConnection } from "./predict";
-import { cleanGraph, getNotCompletedNodes, transformNode } from "./utils";
+import { SolverResult } from "./models";
+import { solveIterative } from "./solveIterative";
 
 /**
  * Solves the bridges puzzle.
@@ -15,80 +12,7 @@ export function solver(bridgesPuzzle: number[][], depth: number = 3) {
     return row.map(item => item.toString());
   });
 
-  const { solved, steps } = solveIterative(puzzle, depth);
+  const result = solveIterative(puzzle, depth);
 
-  return { solved, solution: puzzle, steps } as SolverResult;
-}
-
-/**
- * Loops through solverSteps until the puzzle is solved.
- */
-export function solveIterative(puzzle: string[][], depth: number) {
-  let result;
-  const steps = [];
-  let oldPuzzle = "";
-  let newPuzzle = JSON.stringify(puzzle);
-
-  // loop while new bridges are added to the puzzle
-  while (oldPuzzle !== newPuzzle) {
-    oldPuzzle = newPuzzle;
-
-    result = solverStep(puzzle, depth);
-
-    newPuzzle = JSON.stringify(result.puzzle);
-
-    // save a copy of the current puzzle
-    steps.push(JSON.parse(newPuzzle));
-
-    // exit loop if the puzzle is solved
-    if (result.solved) {
-      break;
-    }
-  }
-
-  return { solved: result.solved, steps };
-}
-
-/**
- * Iterates through all islands and adds new bridges. This function should be called
- * multiple times until the puzzle is solved.
- */
-export function solverStep(puzzle: Puzzle, depth: number) {
-  if (depth < 0) {
-    return { solved: false };
-  }
-  const graph = createGraph(puzzle);
-
-  const nodes = getNotCompletedNodes(graph);
-
-  let newBridges = 0;
-  nodes.forEach(node => {
-    if (!node.completed) {
-      // transform the island to an island of lower value if it has bridges
-      const transformed = transformNode(node);
-
-      newBridges += solveFor(
-        transformed.value,
-        puzzle,
-        node,
-        transformed.neighbors
-      );
-
-      // removes neighbors from graph that are no longer neighbors
-      cleanGraph(graph, puzzle);
-    }
-  });
-
-  // if no bridge has been added and we have multiple smaller graphs instead of one graph,
-  // than try to connect those graphs into one
-  if (newBridges === 0 && getNotCompletedNodes(graph).length > 0) {
-    const result = bruteForceNewConnection(graph, puzzle, depth);
-    if (result.solved) {
-      puzzle = result.steps[result.steps.length - 1];
-    }
-    return { ...result, puzzle };
-  }
-
-  // the puzzle is solved when all nodes are completed
-  return { solved: getNotCompletedNodes(graph).length === 0, puzzle };
+  return result as SolverResult;
 }
