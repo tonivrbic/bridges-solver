@@ -17,13 +17,24 @@ export function bruteForceNewConnection(
   puzzle: Puzzle,
   depth: number
 ): SolverResult {
+  let solutions = [];
   for (const node of getNotCompletedNodes(graph)) {
     for (const neighbor of getNeighbors(node)) {
       const result = tryToConnect(puzzle, node, neighbor, depth);
       if (result.solved === true) {
-        return result;
+        // return result;
+        solutions.push(result);
+      }
+      if (solutions.length > 1) {
+        // console.log("multiple solutions");
+        return { solved: false };
       }
     }
+  }
+
+  if (solutions.length === 1) {
+    console.log(`PERFECT SOLUTION depth=${depth}`);
+    return solutions[0];
   }
 
   return { solved: false };

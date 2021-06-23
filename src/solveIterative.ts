@@ -2,7 +2,12 @@ import { createGraph } from "./graph";
 import { solveFor } from "./islands";
 import { Puzzle, SolverResult } from "./models";
 import { bruteForceNewConnection } from "./predict";
-import { cleanGraph, getNotCompletedNodes, transformNode } from "./utils";
+import {
+  cleanGraph,
+  getNotCompletedNodes,
+  getSubGraph,
+  transformNode
+} from "./utils";
 
 /**
  * Loops through solverSteps until the puzzle is solved.
@@ -75,6 +80,10 @@ export function solverStep(puzzle: Puzzle, depth: number): SolverResult {
     return result;
   }
 
+  let isOneGraph = getSubGraph(graph[0]).length === graph.length;
   // the puzzle is solved when all nodes are completed
-  return { solved: getNotCompletedNodes(graph).length === 0, solution: puzzle };
+  return {
+    solved: getNotCompletedNodes(graph).length === 0 && isOneGraph,
+    solution: puzzle
+  };
 }
