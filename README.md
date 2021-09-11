@@ -1,6 +1,6 @@
 # Bridges (Hashiwokakero) solver
 
-This package allows you to solve the popular japanese puzzle **Hashiwokakero** (also known as Bridges, and Hashi). An application that implements this package is available at https://bridges-solver.app.
+This package allows you to solve the popular japanese puzzle **Hashiwokakero** (also known as Bridges, and Hashi). An application that implements this package is available at https://hashi-puzzles.com and the solver is available [here](https://hashi-puzzles.com/solve).
 
 ## Installation
 
