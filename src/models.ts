@@ -36,6 +36,9 @@ export interface SolverResult {
    * All intermediate state of the puzzle during the solving process.
    */
   steps?: Puzzle[];
+
+  /** List of all solutions if the puzzle has multiple solutions. */
+  multipleSolutions?: Set<string>;
 }
 
 /** Alias for Puzzle */

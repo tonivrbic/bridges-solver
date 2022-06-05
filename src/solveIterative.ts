@@ -2,12 +2,21 @@ import { createGraph } from "./graph";
 import { solveFor } from "./islands";
 import { Puzzle, SolverResult } from "./models";
 import { bruteForceNewConnection } from "./predict";
-import { cleanGraph, getNotCompletedNodes, transformNode } from "./utils";
+import {
+  cleanGraph,
+  getNotCompletedNodes,
+  isPuzzleCompleted,
+  transformNode
+} from "./utils";
 
 /**
  * Loops through solverSteps until the puzzle is solved.
  */
-export function solveIterative(puzzle: string[][], depth: number) {
+export function solveIterative(
+  puzzle: string[][],
+  depth: number,
+  checkForMultipleSolutions: boolean
+) {
   let result: SolverResult;
   let steps = [];
   let oldPuzzle = "";
@@ -17,7 +26,7 @@ export function solveIterative(puzzle: string[][], depth: number) {
   while (oldPuzzle !== newPuzzle) {
     oldPuzzle = newPuzzle;
 
-    result = solverStep(puzzle, depth);
+    result = solverStep(puzzle, depth, checkForMultipleSolutions);
 
     if (result.solution) {
       newPuzzle = JSON.stringify(result.solution);
@@ -28,6 +37,20 @@ export function solveIterative(puzzle: string[][], depth: number) {
 
     // exit loop if the puzzle is solved
     if (result.solved) {
+      break;
+    }
+
+    // exit loop if the puzzle has multiple solutions
+    if (result.multipleSolutions) {
+      break;
+    }
+
+    // exit loop if the puzzle is not solved and there are no new bridges to add
+    if (
+      result.solved === false &&
+      result.solution &&
+      getNotCompletedNodes(createGraph(result.solution)).length === 0
+    ) {
       break;
     }
   }
@@ -42,7 +65,11 @@ export function solveIterative(puzzle: string[][], depth: number) {
  * Iterates through all islands and adds new bridges. This function should be called
  * multiple times until the puzzle is solved.
  */
-export function solverStep(puzzle: Puzzle, depth: number): SolverResult {
+export function solverStep(
+  puzzle: Puzzle,
+  depth: number,
+  checkForMultipleSolutions: boolean
+): SolverResult {
   if (depth < 0) {
     return { solved: false };
   }
@@ -71,10 +98,15 @@ export function solverStep(puzzle: Puzzle, depth: number): SolverResult {
   // if no bridge has been added and we have multiple smaller graphs instead of one graph,
   // than try to connect those graphs into one
   if (newBridges === 0 && getNotCompletedNodes(graph).length > 0) {
-    const result = bruteForceNewConnection(graph, puzzle, depth);
+    const result = bruteForceNewConnection(
+      graph,
+      puzzle,
+      depth,
+      checkForMultipleSolutions
+    );
     return result;
   }
 
   // the puzzle is solved when all nodes are completed
-  return { solved: getNotCompletedNodes(graph).length === 0, solution: puzzle };
+  return { solved: isPuzzleCompleted(graph), solution: puzzle };
 }

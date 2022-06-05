@@ -1,6 +1,6 @@
 import { solver } from "../src";
 import { SolverResult } from "../src/models";
-import { getSize, showResult, showSummary } from "./helpers";
+import { getSize, showPuzzle, showResult, showSummary } from "./helpers";
 import { puzzles } from "./puzzles";
 
 const results: SolverResult[] = [];
@@ -16,6 +16,12 @@ for (let i = 0; i < puzzles.length; i++) {
   results.push(result);
 
   showResult(result, i, size, duration);
+
+  if (result.multipleSolutions) {
+    for (const sol of result.multipleSolutions) {
+      showPuzzle(JSON.parse(sol));
+    }
+  }
 }
 
 showSummary(results, puzzles.length);

@@ -20,10 +20,12 @@ export function showResult(
       showPuzzle(step);
     });
   } else {
-    console.log(
-      `✔ ${puzzleIndex}. solved ${size.rows}x${size.columns} in ${duration}ms`
-        .green
-    );
+    let output = `✔ ${puzzleIndex}. solved ${size.rows}x${size.columns} in ${duration}ms`;
+
+    if (result.multipleSolutions) {
+      output += ` Multiple solutions: ${result.multipleSolutions.size}`;
+    }
+    console.log(output.green);
   }
 }
 
@@ -39,7 +41,7 @@ export function getSize(puzzle: number[][]) {
   };
 }
 
-function showPuzzle(puzzle: Puzzle) {
+export function showPuzzle(puzzle: Puzzle) {
   console.log("----------------------------------");
   const display = [];
   puzzle.forEach(row => display.push(" ".repeat(row.length)));

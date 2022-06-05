@@ -134,7 +134,10 @@ export function getNotCompletedNodes(graph: GraphNode[]) {
 
 /** Returns true if the puzzle is completed */
 export function isPuzzleCompleted(graph: GraphNode[]) {
-  return getNotCompletedNodes(graph).length === 0;
+  return (
+    getNotCompletedNodes(graph).length === 0 &&
+    getSubGraph(graph[0]).length === graph.length
+  );
 }
 
 /**
@@ -262,11 +265,6 @@ export function getSubGraph(node: GraphNode) {
     });
   }
   return visitedNodes;
-}
-
-/** Return true if a graph is closed i.e. every node is complete */
-export function isGraphClosed(nodes: GraphNode[]) {
-  return nodes.every(x => x.completed === true);
 }
 
 /** Clamp a value between min and max. */

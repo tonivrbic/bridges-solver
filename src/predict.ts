@@ -15,15 +15,50 @@ import {
 export function bruteForceNewConnection(
   graph: GraphNode[],
   puzzle: Puzzle,
-  depth: number
+  depth: number,
+  checkForMultipleSolutions: boolean
 ): SolverResult {
-  for (const node of getNotCompletedNodes(graph)) {
+  let solutions = new Set<string>();
+  let notCompetedNodes = getNotCompletedNodes(graph);
+  for (const node of notCompetedNodes) {
     for (const neighbor of getNeighbors(node)) {
-      const result = tryToConnect(puzzle, node, neighbor, depth);
+      const result = tryToConnect(
+        puzzle,
+        node,
+        neighbor,
+        depth,
+        checkForMultipleSolutions
+      );
       if (result.solved === true) {
-        return result;
+        if (!checkForMultipleSolutions) {
+          return result;
+        }
+
+        if (result.solution) {
+          solutions.add(JSON.stringify(result.solution));
+        }
+
+        if (result.multipleSolutions) {
+          for (const solution of result.multipleSolutions) {
+            solutions.add(solution);
+          }
+        }
       }
     }
+  }
+
+  if (solutions.size === 1) {
+    return {
+      solved: true,
+      solution: JSON.parse(solutions.values().next().value)
+    };
+  }
+
+  if (solutions.size > 1) {
+    return {
+      solved: true,
+      multipleSolutions: solutions
+    };
   }
 
   return { solved: false };
@@ -37,7 +72,8 @@ function tryToConnect(
   puzzle: Puzzle,
   node: GraphNode,
   neighbor: Neighbor,
-  depth: number
+  depth: number,
+  checkForMultipleSolutions: boolean
 ): SolverResult {
   if (depth < 0) {
     return { solved: false };
@@ -53,7 +89,11 @@ function tryToConnect(
   connectToNeighbor(testNode, testNeighbor, puzzleClone);
   cleanGraph(graph, puzzleClone);
 
-  const result = solveIterative(puzzleClone, --depth);
+  const result = solveIterative(
+    puzzleClone,
+    --depth,
+    checkForMultipleSolutions
+  );
 
   return result;
 }
