@@ -1,6 +1,18 @@
-# Bridges (Hashiwokakero) solver
+# Hashi Puzzle solver
 
 This package allows you to solve the popular japanese puzzle **Hashiwokakero** (also known as Bridges, and Hashi). An application that implements this package is available at https://hashi-puzzles.com and the solver is available [here](https://hashi-puzzles.com/solve).
+
+## Links 
+
+### Solver 
+You can play with the solver on the Hashi Puzzles application at the following link:
+- [Hashi Puzzles App](https://hashi-puzzles.com/solve)
+
+###  Generator 
+Also, I have a hashi **generator** library that is available on
+- [Hashi Puzzles App](https://hashi-puzzles.com/generator)
+- [Github](https://github.com/tonivrbic/bridges-generator)
+- [npm](https://www.npmjs.com/package/bridges-generator) 
 
 ## Installation
 
