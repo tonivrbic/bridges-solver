@@ -10,4 +10,5 @@ if (result.multipleSolutions) {
   for (const sol of result.multipleSolutions) {
     showPuzzle(JSON.parse(sol));
   }
+  console.log("Multiple solutions found");
 }

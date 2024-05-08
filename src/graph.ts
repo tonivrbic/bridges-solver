@@ -1,10 +1,10 @@
-import { ExtractedIsland, GraphNode, Puzzle } from "./models";
+import type { ExtractedIsland, GraphNode, Puzzle } from "./models";
 import {
   traverseDown,
   traverseLeft,
   traverseRight,
   traverseUp,
-  updateStates
+  updateStates,
 } from "./utils";
 
 /**
@@ -32,7 +32,7 @@ function extractIslands(puzzle: Puzzle) {
       if (item > "0" && item < "9") {
         islands.push({
           position: [i, j],
-          value: item
+          value: item,
         });
       }
     });
@@ -60,7 +60,7 @@ function createNodes(puzzle: Puzzle, extractedIslands: ExtractedIsland[]) {
           bridges: i.bridges,
           done: false,
           node: {},
-          position: i.position
+          position: i.position,
         });
       }
     }
@@ -70,7 +70,7 @@ function createNodes(puzzle: Puzzle, extractedIslands: ExtractedIsland[]) {
       id: index,
       neighbors,
       position: item.position,
-      value: +item.value
+      value: +item.value,
     } as GraphNode;
   });
 }
@@ -79,15 +79,16 @@ function createNodes(puzzle: Puzzle, extractedIslands: ExtractedIsland[]) {
  * Creates connections between nodes.
  */
 function connectNodes(graphNodes: GraphNode[]) {
-  graphNodes.forEach(item => {
-    item.neighbors.forEach((v, i) => {
+  for (const item of graphNodes) {
+    for (let i = 0; i < item.neighbors.length; i++) {
+      const v = item.neighbors[i];
       if (v !== null) {
         const node = graphNodes.find(
-          n =>
-            n.position[0] === v.position[0] && n.position[1] === v.position[1]
+          (n) =>
+            n.position[0] === v.position[0] && n.position[1] === v.position[1],
         );
         item.neighbors[i].node = node;
       }
-    });
-  });
+    }
+  }
 }

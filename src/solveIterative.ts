@@ -1,12 +1,12 @@
 import { createGraph } from "./graph";
 import { solveFor } from "./islands";
-import { Puzzle, SolverResult } from "./models";
+import type { Puzzle, SolverResult } from "./models";
 import { bruteForceNewConnection } from "./predict";
 import {
   cleanGraph,
   getNotCompletedNodes,
   isPuzzleCompleted,
-  transformNode
+  transformNode,
 } from "./utils";
 
 /**
@@ -15,7 +15,7 @@ import {
 export function solveIterative(
   puzzle: string[][],
   depth: number,
-  checkForMultipleSolutions: boolean
+  checkForMultipleSolutions: boolean,
 ) {
   let result: SolverResult;
   let steps = [];
@@ -68,7 +68,7 @@ export function solveIterative(
 export function solverStep(
   puzzle: Puzzle,
   depth: number,
-  checkForMultipleSolutions: boolean
+  checkForMultipleSolutions: boolean,
 ): SolverResult {
   if (depth < 0) {
     return { solved: false };
@@ -78,7 +78,7 @@ export function solverStep(
   const nodes = getNotCompletedNodes(graph);
 
   let newBridges = 0;
-  nodes.forEach(node => {
+  nodes.forEach((node) => {
     if (!node.completed) {
       // transform the island to an island of lower value if it has bridges
       const transformed = transformNode(node);
@@ -87,7 +87,7 @@ export function solverStep(
         transformed.value,
         puzzle,
         node,
-        transformed.neighbors
+        transformed.neighbors,
       );
 
       // removes neighbors from graph that are no longer neighbors
@@ -102,7 +102,7 @@ export function solverStep(
       graph,
       puzzle,
       depth,
-      checkForMultipleSolutions
+      checkForMultipleSolutions,
     );
     return result;
   }

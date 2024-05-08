@@ -1,12 +1,12 @@
 import { createGraph } from "./graph";
 import { solveFor } from "./islands";
-import { GraphNode, Neighbor, Puzzle, SolverResult } from "./models";
+import type { GraphNode, Neighbor, Puzzle, SolverResult } from "./models";
 import { solveIterative } from "./solveIterative";
 import {
   cleanGraph,
   getBridges,
   getNeighbors,
-  getNotCompletedNodes
+  getNotCompletedNodes,
 } from "./utils";
 
 /**
@@ -16,10 +16,10 @@ export function bruteForceNewConnection(
   graph: GraphNode[],
   puzzle: Puzzle,
   depth: number,
-  checkForMultipleSolutions: boolean
+  checkForMultipleSolutions: boolean,
 ): SolverResult {
-  let solutions = new Set<string>();
-  let notCompetedNodes = getNotCompletedNodes(graph);
+  const solutions = new Set<string>();
+  const notCompetedNodes = getNotCompletedNodes(graph);
   for (const node of notCompetedNodes) {
     for (const neighbor of getNeighbors(node)) {
       const result = tryToConnect(
@@ -27,7 +27,7 @@ export function bruteForceNewConnection(
         node,
         neighbor,
         depth,
-        checkForMultipleSolutions
+        checkForMultipleSolutions,
       );
       if (result.solved === true) {
         if (!checkForMultipleSolutions) {
@@ -50,14 +50,14 @@ export function bruteForceNewConnection(
   if (solutions.size === 1) {
     return {
       solved: true,
-      solution: JSON.parse(solutions.values().next().value)
+      solution: JSON.parse(solutions.values().next().value),
     };
   }
 
   if (solutions.size > 1) {
     return {
       solved: true,
-      multipleSolutions: solutions
+      multipleSolutions: solutions,
     };
   }
 
@@ -73,7 +73,7 @@ function tryToConnect(
   node: GraphNode,
   neighbor: Neighbor,
   depth: number,
-  checkForMultipleSolutions: boolean
+  checkForMultipleSolutions: boolean,
 ): SolverResult {
   if (depth < 0) {
     return { solved: false };
@@ -81,9 +81,9 @@ function tryToConnect(
 
   const puzzleClone = clone(puzzle);
   const graph = createGraph(puzzleClone);
-  const testNode = graph.find(x => x.id === node.id);
+  const testNode = graph.find((x) => x.id === node.id);
   const testNeighbor = getNeighbors(testNode).find(
-    x => x.node.id === neighbor.node.id
+    (x) => x.node.id === neighbor.node.id,
   );
 
   connectToNeighbor(testNode, testNeighbor, puzzleClone);
@@ -92,7 +92,7 @@ function tryToConnect(
   const result = solveIterative(
     puzzleClone,
     --depth,
-    checkForMultipleSolutions
+    checkForMultipleSolutions,
   );
 
   return result;
@@ -104,7 +104,7 @@ function tryToConnect(
 function connectToNeighbor(
   node: GraphNode,
   neighbor: Neighbor,
-  puzzle: string[][]
+  puzzle: string[][],
 ) {
   const value = node.value - getBridges(node) + neighbor.bridges;
   return solveFor(value, puzzle, node, [neighbor]);

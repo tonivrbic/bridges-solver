@@ -1,6 +1,6 @@
 // tslint:disable: no-console
 import "colors";
-import { Puzzle, SolverResult } from "../src/models";
+import type { Puzzle, SolverResult } from "../src/models";
 
 export function showResult(
   result: SolverResult,
@@ -9,11 +9,11 @@ export function showResult(
     columns: number;
     rows: number;
   },
-  duration: number
+  duration: number,
 ) {
   if (result.solved === false) {
     console.log(
-      `❌ ${puzzleIndex}. not solved ${size.rows}x${size.columns}`.red
+      `❌ ${puzzleIndex}. not solved ${size.rows}x${size.columns}`.red,
     );
     result.steps.forEach((step, i) => {
       console.log(`Iteration ${i + 1}`);
@@ -30,21 +30,21 @@ export function showResult(
 }
 
 export function showSummary(results: SolverResult[], puzzlesCount: number) {
-  const solvedNum = results.filter(x => x.solved === true).length;
+  const solvedNum = results.filter((x) => x.solved === true).length;
   console.log(`Solved ${solvedNum}/${puzzlesCount}`.underline.bold);
 }
 
 export function getSize(puzzle: number[][]) {
   return {
     columns: puzzle[0].length,
-    rows: puzzle.length
+    rows: puzzle.length,
   };
 }
 
 export function showPuzzle(puzzle: Puzzle) {
   console.log("----------------------------------");
   const display = [];
-  puzzle.forEach(row => display.push(" ".repeat(row.length)));
+  puzzle.forEach((row) => display.push(" ".repeat(row.length)));
   for (let i = 0; i < puzzle.length; i++) {
     for (let j = 0; j < puzzle.length; j++) {
       if (
@@ -62,7 +62,7 @@ export function showPuzzle(puzzle: Puzzle) {
       }
     }
   }
-  display.forEach(row => console.log(row));
+  display.forEach((row) => console.log(row));
   console.log("----------------------------------");
   return display;
 }

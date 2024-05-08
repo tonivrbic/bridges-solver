@@ -1,4 +1,4 @@
-import { SolverResult } from "./models";
+import type { SolverResult } from "./models";
 import { solveIterative } from "./solveIterative";
 
 /**
@@ -10,12 +10,12 @@ import { solveIterative } from "./solveIterative";
  */
 export function solver(
   bridgesPuzzle: number[][],
-  depth: number = 2,
-  checkForMultipleSolutions = false
+  depth = 2,
+  checkForMultipleSolutions = false,
 ) {
   // convert the puzzle with numbers to strings
-  const puzzle = bridgesPuzzle.map(row => {
-    return row.map(item => item.toString());
+  const puzzle = bridgesPuzzle.map((row) => {
+    return row.map((item) => item.toString());
   });
 
   const result = solveIterative(puzzle, depth, checkForMultipleSolutions);

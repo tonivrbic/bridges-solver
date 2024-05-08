@@ -1,5 +1,5 @@
 import { solver } from "../src";
-import { SolverResult } from "../src/models";
+import type { SolverResult } from "../src/models";
 import { getSize, showPuzzle, showResult, showSummary } from "./helpers";
 import { puzzles } from "./puzzles";
 
@@ -26,6 +26,6 @@ for (let i = 0; i < puzzles.length; i++) {
 
 showSummary(results, puzzles.length);
 
-if (results.some(x => !x.solved)) {
+if (results.some((x) => !x.solved)) {
   throw new Error("Test did not pass");
 }

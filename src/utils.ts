@@ -1,4 +1,4 @@
-import { GraphNode, Puzzle } from "./models";
+import type { GraphNode, Puzzle } from "./models";
 
 /**
  * Tries to find a neighbor by going up.
@@ -13,7 +13,7 @@ export function traverseUp(puzzle: Puzzle, x: number, y: number) {
       return {
         bridges: detectBridges(puzzle[row + 1][y]),
         position: [row, y],
-        value: puzzle[row][y]
+        value: puzzle[row][y],
       };
     }
   }
@@ -34,7 +34,7 @@ export function traverseDown(puzzle: Puzzle, x: number, y: number) {
       return {
         bridges: detectBridges(puzzle[row - 1][y]),
         position: [row, y],
-        value: puzzle[row][y]
+        value: puzzle[row][y],
       };
     }
   }
@@ -54,7 +54,7 @@ export function traverseRight(puzzle: Puzzle, x: number, y: number) {
       return {
         bridges: detectBridges(puzzle[x][column - 1]),
         position: [x, column],
-        value: puzzle[x][column]
+        value: puzzle[x][column],
       };
     }
   }
@@ -74,7 +74,7 @@ export function traverseLeft(puzzle: Puzzle, x: number, y: number) {
       return {
         bridges: detectBridges(puzzle[x][column + 1]),
         position: [x, column],
-        value: puzzle[x][column]
+        value: puzzle[x][column],
       };
     }
   }
@@ -83,13 +83,13 @@ export function traverseLeft(puzzle: Puzzle, x: number, y: number) {
 
 /** Gets the neighbors of a node. */
 export function getNeighbors(node: GraphNode) {
-  return node.neighbors.filter(n => !!n);
+  return node.neighbors.filter((n) => !!n);
 }
 
 /** Gets number of not completed bridges.  */
 export function getBridgesNotCompleted(node: GraphNode) {
   return getNeighbors(node)
-    .filter(x => !x.done)
+    .filter((x) => !x.done)
     .reduce((a, b) => a + b.bridges, 0);
 }
 
@@ -106,15 +106,15 @@ export function getBridgesRemaining(node: GraphNode) {
 /** Updates the state of the node and its neighbors. */
 export function updateState(node: GraphNode) {
   const neighbors = getNeighbors(node);
-  neighbors.filter(x => x.bridges === 2).forEach(x => (x.done = true));
+  neighbors.filter((x) => x.bridges === 2).forEach((x) => (x.done = true));
 
   const connectedBridges = neighbors.reduce((a, b) => a + b.bridges, 0);
   if (connectedBridges === node.value) {
     node.completed = true;
-    neighbors.forEach(neighbor => {
+    neighbors.forEach((neighbor) => {
       neighbor.done = true;
       const reverseConnection = getNeighbors(neighbor.node).find(
-        n => n.node.id === node.id
+        (n) => n.node.id === node.id,
       );
       reverseConnection.done = true;
       reverseConnection.bridges = neighbor.bridges;
@@ -124,12 +124,12 @@ export function updateState(node: GraphNode) {
 
 /** Updates states for all multiple nodes. */
 export function updateStates(nodes: GraphNode[]) {
-  nodes.forEach(n => updateState(n));
+  nodes.forEach((n) => updateState(n));
 }
 
 /** Return not completed nodes from the graph. */
 export function getNotCompletedNodes(graph: GraphNode[]) {
-  return graph.filter(n => !n.completed);
+  return graph.filter((n) => !n.completed);
 }
 
 /** Returns true if the puzzle is completed */
@@ -150,12 +150,14 @@ export function isPuzzleCompleted(graph: GraphNode[]) {
 export function transformNode(node: GraphNode) {
   let value = node.value;
   const allNeighbors = getNeighbors(node);
-  const activeNeighbors = allNeighbors.filter(x => x.done === false);
-  allNeighbors.filter(x => x.done === true).forEach(x => (value -= x.bridges));
+  const activeNeighbors = allNeighbors.filter((x) => x.done === false);
+  allNeighbors
+    .filter((x) => x.done === true)
+    .forEach((x) => (value -= x.bridges));
 
   return {
     neighbors: activeNeighbors,
-    value
+    value,
   };
 }
 
@@ -166,7 +168,7 @@ export function fillPuzzleWithBridge(
   y1: number,
   x2: number,
   y2: number,
-  numberOfBridges: number
+  numberOfBridges: number,
 ) {
   if (numberOfBridges === 0) {
     return;
@@ -214,7 +216,7 @@ export function cleanNeighbors(node: GraphNode, puzzle: Puzzle) {
     traverseUp(puzzle, node.position[0], node.position[1]),
     traverseRight(puzzle, node.position[0], node.position[1]),
     traverseDown(puzzle, node.position[0], node.position[1]),
-    traverseLeft(puzzle, node.position[0], node.position[1])
+    traverseLeft(puzzle, node.position[0], node.position[1]),
   ];
   for (let i = 0; i < newNeighbors.length; i++) {
     const element = newNeighbors[i];
@@ -239,7 +241,7 @@ export function cleanNeighbors(node: GraphNode, puzzle: Puzzle) {
 /** For all nodes traverses the puzzle and cleans up neighbors from graph that are no longer neighbors. */
 export function cleanGraph(graph: GraphNode[], puzzle: Puzzle) {
   updateStates(graph);
-  graph.forEach(node => cleanNeighbors(node, puzzle));
+  graph.forEach((node) => cleanNeighbors(node, puzzle));
 }
 
 /** From a starting nodes finds all the nodes that are connected in a graph. */
@@ -252,7 +254,7 @@ export function getSubGraph(node: GraphNode) {
   visitedNodes.push(node);
   while (toVisit.length > 0) {
     const popped = toVisit.pop();
-    popped.neighbors.forEach(neighbor => {
+    popped.neighbors.forEach((neighbor) => {
       if (
         neighbor !== null &&
         neighbor.bridges > 0 &&
