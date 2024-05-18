@@ -209,7 +209,7 @@ function separateNeighbors(neighbors: Neighbor[]) {
  * @param puzzle The current puzzle
  * @param append Add the bridge to the already existing bridge instead of overriding it.
  */
-function connectTo(
+export function connectTo(
   node: GraphNode,
   neighbors: Neighbor[],
   bridges: number,

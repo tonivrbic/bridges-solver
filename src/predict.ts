@@ -1,5 +1,5 @@
 import { createGraph } from "./graph";
-import { solveFor } from "./islands";
+import { connectTo, solveFor } from "./islands";
 import type { GraphNode, Neighbor, Puzzle, SolverResult } from "./models";
 import { solveIterative } from "./solveIterative";
 import {
@@ -21,7 +21,7 @@ export function bruteForceNewConnection(
   const solutions = new Set<string>();
   const notCompetedNodes = getNotCompletedNodes(graph);
   for (const node of notCompetedNodes) {
-    for (const neighbor of getNeighbors(node)) {
+    for (const neighbor of getNeighbors(node).filter((x) => !x.done)) {
       const result = tryToConnect(
         puzzle,
         node,
@@ -86,7 +86,7 @@ function tryToConnect(
     (x) => x.node.id === neighbor.node.id,
   );
 
-  connectToNeighbor(testNode, testNeighbor, puzzleClone);
+  connectTo(testNode, [testNeighbor], 1, puzzleClone, true);
   cleanGraph(graph, puzzleClone);
 
   const result = solveIterative(
