@@ -238,7 +238,7 @@ export function connectTo(
       node.position[1],
       neighbor.position[0],
       neighbor.position[1],
-      bridges,
+      neighbor.bridges,
     );
   }
 
