@@ -46,7 +46,7 @@ export function traverseDown(puzzle: Puzzle, x: number, y: number) {
  * @returns Return 0 if a neighbor was not found, otherwise returns an object with found neighbor
  */
 export function traverseRight(puzzle: Puzzle, x: number, y: number) {
-  for (let column = y + 1; column < puzzle.length; column++) {
+  for (let column = y + 1; column < puzzle[x].length; column++) {
     if (puzzle[x][column] === "$" || puzzle[x][column] === "|") {
       return 0;
     }

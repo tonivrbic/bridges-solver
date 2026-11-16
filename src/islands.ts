@@ -100,6 +100,7 @@ function two(node: GraphNode, neighbors: Neighbor[], puzzle: Puzzle) {
   // in a situation where an island with 2 has one neighbor whit value 2
   // and the other with a value more than 2, than connect with one bridge to the larger
   if (
+    node.value === 2 &&
     neighbors.length === 2 &&
     unique.size === 2 &&
     neighbors.some((x) => x.node.value === 2) &&

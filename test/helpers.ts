@@ -46,7 +46,7 @@ export function showPuzzle(puzzle: Puzzle) {
   const display = [];
   puzzle.forEach((row) => display.push(" ".repeat(row.length)));
   for (let i = 0; i < puzzle.length; i++) {
-    for (let j = 0; j < puzzle.length; j++) {
+    for (let j = 0; j < puzzle[i].length; j++) {
       if (
         (puzzle[i][j] > "0" && puzzle[i][j] < "9") ||
         puzzle[i][j] === "=" ||
@@ -56,9 +56,7 @@ export function showPuzzle(puzzle: Puzzle) {
       ) {
         // place value inside string at correct position
         display[i] =
-          display[i].slice(0, j) +
-          puzzle[i][j] +
-          display[i].slice(j + 1, puzzle.length);
+          display[i].slice(0, j) + puzzle[i][j] + display[i].slice(j + 1);
       }
     }
   }
